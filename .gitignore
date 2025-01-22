@@ -1,0 +1,5 @@
+.vscode
+.flatpak-builder
+build
+web/web.a
+web/web.h

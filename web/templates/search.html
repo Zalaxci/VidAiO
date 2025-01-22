@@ -1,0 +1,65 @@
+{{define "ani-search"}}
+
+{{template "head_start" .}}
+<title>Search Anime</title>
+<style>
+body {
+	flex-direction: column-reverse;
+}
+#anime-search {
+	width: min(300px, 95vw);
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 30vh;
+}
+.rotated-container {
+	position: absolute;
+	top: 0;
+	bottom: calc(100vh - 330px);
+	height: 100vw;
+	width: min(330px, 100vh);
+	overflow-y: scroll;
+	overflow-x: hidden;
+	transform: rotate(-90deg) translateY(max(-330px, -100vh));
+	transform-origin: right top;
+	margin-top: calc(100vh - min(330px, 100vh));
+}
+.nav-item {
+	display: block;
+	transform: rotate(90deg) translateX(310px);
+	transform-origin: right top;
+	height: 230px;
+	min-height: 230px;
+	width: 330px;
+}
+.nav-item:hover {
+	height: 275px;
+}
+.nav-bottom {
+	display: none;
+}
+.film-poster {
+	position: absolute;
+	z-index: -1;
+}
+img {
+	width: 330px;
+}
+.srp-detail {
+	width: 230px;
+}
+</style>
+{{template "head_body" .}}
+<input id="anime-search" name="anime-search" placeholder="Search for your favorite anime!"/>
+<div class="rotated-container">{{index . "raw_html"}}</div>
+<script>
+	const animeSearch = document.getElementById('anime-search');
+	animeSearch.onkeyup = event => {
+		if (event.key === "Enter") location.href = "./" + animeSearch.value;
+	};
+	for (let a of document.querySelectorAll('a')) {
+		a.href = "/ani/episodes/" + a.href.split("?")[0].split("-").pop();
+	}
+</script>
+{{template "body_end" .}}
+{{end}}

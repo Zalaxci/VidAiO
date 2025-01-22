@@ -1,0 +1,13 @@
+{{define "ani-servers"}}
+
+{{template "head_start" .}}
+<title>Anime Servers</title>
+{{template "head_body" .}}
+{{index . "raw_html"}}
+<script>
+	for (let serverDiv of document.querySelectorAll("div[data-id]")) {
+		serverDiv.querySelector("a").href = "http://hianime.to/ajax/v2/episode/sources?id=" + serverDiv.getAttribute("data-id")
+	}
+</script>
+{{template "body_end" .}}
+{{end}}

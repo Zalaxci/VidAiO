@@ -1,0 +1,54 @@
+{{define "ani-episodes"}}
+
+{{template "head_start" .}}
+<title>Anime Episodes</title>
+<style>
+.seasons-block {
+	width: 100%;
+}
+.ss-choice {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	place-content: center;
+	place-items: center;
+}
+.ss-list {
+	height: 100vw;
+	width: 100vh;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	transform: rotate(-90deg) translateY(-100vh);
+	transform-origin: right top;
+}
+.ep-item {
+	display: block;
+	transform: rotate(90deg) translateX(100vh) translateY(20px);
+	transform-origin: right top;
+	height: 120px;
+	min-height: 120px;
+	width: 100vh;
+}
+.ep-name {
+	width: 120px;
+}
+</style>
+{{template "head_body" .}}
+{{index . "raw_html"}}
+<script>
+	const episodeElements = document.getElementsByClassName('ep-item')
+	document.getElementById('search-ep').oninput = (ev) => {
+		for (let epElement of episodeElements) {
+			const numberContainsInput = epElement.dataset.number.includes(ev.target.value)
+			const nameContainsInput = epElement.title.toLowerCase().includes(ev.target.value)
+			console.log(epElement, numberContainsInput || nameContainsInput	)
+			epElement.style.display = (numberContainsInput || nameContainsInput)? 'block' : 'none'
+		}
+	}
+	for (let a of document.querySelectorAll('a')) {
+		a.href = "/ani/servers/" + a.href.split("=").pop();
+	}
+</script>
+{{template "body_end" .}}
+
+{{end}}

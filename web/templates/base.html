@@ -1,0 +1,36 @@
+{{ define "head_start" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{{ end }}
+
+{{ define "head_body" }}
+<style>
+body {
+	width: 100%;
+	margin: 0;
+    background-color: rgb(25, 31, 31);
+	overflow-y: hidden;	
+	display: flex;
+	flex-direction: column;
+}
+* {
+    font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
+	color: lightgrey;
+	text-decoration: none;
+}
+*::-webkit-scrollbar {
+	display: none; /* to hide the default scrollbar, set the webkit-scrollbar (since QtWebView uses chrome or webkit) element's display to none */
+}
+</style>
+</head>
+<body>
+{{ end }}
+
+{{ define "body_end" }}
+</body>
+</html>
+{{ end }}
+

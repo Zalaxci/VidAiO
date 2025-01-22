@@ -1,0 +1,1 @@
+flatpak-builder build --user --install-deps-from=flathub --force-clean --ccache --install .flatpak-manifest.yaml

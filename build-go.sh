@@ -1,0 +1,1 @@
+go build -buildmode=c-archive -o web/web.a web/web.go

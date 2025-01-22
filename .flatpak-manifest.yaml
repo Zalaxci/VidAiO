@@ -1,0 +1,200 @@
+id: ga.calyx.VidAiO
+runtime: org.kde.Platform
+runtime-version: '6.8'
+sdk: org.kde.Sdk
+base: io.qt.qtwebengine.BaseApp
+base-version: '6.8'
+command: VidAiO
+finish-args:
+  - --device=dri
+  - --share=ipc
+  - --share=network
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --socket=pulseaudio
+modules:
+  - name: VidAiO
+    buildsystem: cmake
+    sources:
+      - type: dir
+        path: ./
+    modules:
+      - name: mpvqt
+        buildsystem: cmake-ninja
+        sources:
+          - type: archive
+            url: https://download.kde.org/stable/mpvqt/mpvqt-1.0.1.tar.xz
+            sha256: 9f37b85f319c27f6244743c4259402b0aa2474ed851f0d833d9bd2a0731c178c
+            x-checker-data:
+              type: anitya
+              projet-id: 370634
+              url-template: https://download.kde.org/stable/mpvqt/mpvqt-$version.tar.xz
+        modules:
+          - name: libmpv
+            cleanup:
+              - /share/bash-completion
+              - /share/zsh
+              - /share/doc
+              - /share/icons
+              - /share/applications
+            buildsystem: meson
+            config-opts:
+              - -Dlibmpv=true
+              - -Dlua=enabled
+              - -Ddebug=false
+              - -Dbuild-date=false
+              - -Dalsa=disabled
+              - -Dmanpage-build=disabled
+            sources:
+              - type: archive
+                url: https://github.com/mpv-player/mpv/archive/refs/tags/v0.39.0.tar.gz
+                sha256: 2ca92437affb62c2b559b4419ea4785c70d023590500e8a52e95ea3ab4554683
+                x-checker-data:
+                  type: anitya
+                  project-id: 5348
+                  stable-only: true
+                  url-template: https://github.com/mpv-player/mpv/archive/refs/tags/v$version.tar.gz
+            modules:
+              - name: luajit
+                no-autogen: true
+                make-args:
+                  - BUILDMODE=dynamic
+                  - PREFIX=${FLATPAK_DEST}
+                make-install-args:
+                  - PREFIX=${FLATPAK_DEST}
+                sources:
+                  - type: git
+                    url: https://github.com/openresty/luajit2.git
+                    tag: v2.1-20241113
+                    commit: 098183d9d24b8942a26dcc720fe8725b287ec77f
+                    x-checker-data:
+                      type: git
+                      tag-pattern: ^v([\d.-]+)$
+                      stable-only: false
+                cleanup:
+                  - /bin
+
+              - name: libplacebo
+                buildsystem: meson
+                config-opts:
+                  - -Dd3d11=disabled
+                  - -Ddemos=False
+                sources:
+                  - type: archive
+                    url: https://code.videolan.org/videolan/libplacebo/-/archive/v7.349.0/libplacebo-v7.349.0.tar.gz
+                    sha256: 79120e685a1836344b51b13b6a5661622486a84e4d4a35f6c8d01679a20fbc86
+                    x-checker-data:
+                      type: anitya
+                      project-id: 20101
+                      stable-only: true
+                      url-template: https://code.videolan.org/videolan/libplacebo/-/archive/v$version/libplacebo-v$version.tar.gz
+                  - type: archive
+                    url: https://github.com/pallets/jinja/archive/refs/tags/3.1.4.tar.gz
+                    sha256: ed06f67abd2c8b7697dfb714f80715903ab0507e3c5acc11e92477e4ea51033b
+                    dest: 3rdparty/jinja
+                    x-checker-data:
+                      type: anitya
+                      projet-id: 3894
+                      url-template: https://github.com/pallets/jinja/archive/refs/tags/$version.tar.gz
+                  - type: archive
+                    url: https://github.com/Dav1dde/glad/archive/refs/tags/v2.0.4.tar.gz
+                    sha256: 02629644c242dcc27c58222bd2c001d5e2f3765dbbcfd796542308bddebab401
+                    dest: 3rdparty/glad
+                    x-checker-data:
+                      type: anitya
+                      projet-id: 300234
+                      url-template: https://github.com/Dav1dde/glad/archive/refs/tags/v$version.tar.gz
+
+              - name: libXpresent
+                buildsystem: autotools
+                sources:
+                  - type: archive
+                    url: https://xorg.freedesktop.org/archive/individual/lib/libXpresent-1.0.1.tar.xz
+                    sha256: b964df9e5a066daa5e08d2dc82692c57ca27d00b8cc257e8e960c9f1cf26231b
+                    x-checker-data:
+                      type: anitya
+                      project-id: 17166
+                      stable-only: true
+                      url-template: https://xorg.freedesktop.org/archive/individual/lib/libXpresent-$version.tar.xz
+
+              - name: nv-codec-headers
+                cleanup:
+                  - '*'
+                no-autogen: true
+                make-install-args:
+                  - PREFIX=/app
+                sources:
+                  - type: archive
+                    url: https://github.com/FFmpeg/nv-codec-headers/archive/refs/tags/n12.2.72.0.tar.gz
+                    sha256: dbeaec433d93b850714760282f1d0992b1254fc3b5a6cb7d76fc1340a1e47563
+                    x-checker-data:
+                      type: anitya
+                      project-id: 223796
+                      stable-only: true
+                      url-template: https://github.com/FFmpeg/nv-codec-headers/archive/refs/tags/n$version.tar.gz
+
+              - name: ffmpeg
+                cleanup:
+                  - /share/ffmpeg/examples
+                config-opts:
+                  - --disable-debug
+                  - --disable-doc
+                  - --disable-programs
+                  - --disable-static
+                  - --disable-encoders
+                  - --disable-muxers
+                  - --enable-shared
+                  - --enable-gnutls
+                  - --enable-gpl
+                  - --enable-version3
+                  - --enable-encoder=png,libwebp,libjxl
+                  - --enable-libv4l2
+                  - --enable-libdav1d
+                  - --enable-libfontconfig
+                  - --enable-libfreetype
+                  - --enable-libopus
+                  - --enable-librsvg
+                  - --enable-libvpx
+                  - --enable-libmp3lame
+                  - --enable-libwebp
+                  - --enable-libjxl
+                  - --enable-libxml2
+                sources:
+                  - type: archive
+                    url: https://ffmpeg.org/releases/ffmpeg-7.1.tar.gz
+                    sha256: 42a7dc0d1583885d1b8f6559fa7ce28f97acafea6803de6a8f73e3ba229348bd
+                    x-checker-data:
+                      type: anitya
+                      project-id: 5405
+                      stable-only: true
+                      url-template: https://ffmpeg.org/releases/ffmpeg-$version.tar.gz
+
+              - name: libass
+                config-opts:
+                  - --disable-static
+                sources:
+                  - type: archive
+                    url: https://github.com/libass/libass/releases/download/0.17.3/libass-0.17.3.tar.gz
+                    sha256: da7c348deb6fa6c24507afab2dee7545ba5dd5bbf90a137bfe9e738f7df68537
+                    x-checker-data:
+                      type: anitya
+                      project-id: 1560
+                      stable-only: true
+                      url-template: https://github.com/libass/libass/releases/download/$version/libass-$version.tar.gz
+
+              - name: uchardet
+                buildsystem: cmake-ninja
+                config-opts:
+                  - -DCMAKE_BUILD_TYPE=Release
+                  - -DBUILD_STATIC=0
+                cleanup:
+                  - /bin
+                sources:
+                  - type: archive
+                    url: https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.8.tar.xz
+                    sha256: e97a60cfc00a1c147a674b097bb1422abd9fa78a2d9ce3f3fdcc2e78a34ac5f0
+                    x-checker-data:
+                      type: anitya
+                      project-id: 9265
+                      stable-only: true
+                      url-template: https://www.freedesktop.org/software/uchardet/releases/uchardet-$version.tar.xz
