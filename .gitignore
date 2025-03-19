@@ -1,5 +1,7 @@
 .vscode
 .flatpak-builder
+bin
 build
+clay
 web/web.a
 web/web.h
